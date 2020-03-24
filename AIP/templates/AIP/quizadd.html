@@ -1,0 +1,73 @@
+{% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
+<!DOCTYPE HTML>
+<!--
+   QuizHop
+   -->
+<html xmlns="http://www.w3.org/1999/html">
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <title> Quiz Hop </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Adaptive Interview Poral" />
+      <link href="https://fonts.googleapis.com/css?family=Raleway:100,300,400,700" rel="stylesheet">
+      <!-- Animate.css -->
+      <link rel="stylesheet" href="{% static 'css/animate.css'%}">
+      <!-- Icomoon Icon Fonts-->
+      <link rel="stylesheet" href="{% static 'css/icomoon.css'%}">
+      <!-- Themify Icons-->
+      <link rel="stylesheet" href="{% static 'css/themify-icons.css'%}">
+      <!-- Bootstrap  -->
+      <link rel="stylesheet" href="{% static 'css/bootstrap.css'%}">
+      <!-- Theme style  -->
+      <link rel="stylesheet" href="{% static 'css/style.css'%}">
+   </head>
+   <body>
+      <div class="gtco-loader"></div>
+      <div id="page">
+         <header id="gtco-header" class="gtco-cover" role="banner">
+            <div class="gtco-container">
+               <div class="display-tc">
+                  <div class="row">
+                     <form id="form" name="form" method="post" action="/addquestion/">{%  csrf_token %}
+                        <h3><strong><i>Please select the Skill and the Module of the quiz you wish to add</i></strong></h3>
+
+                         <p><strong>Select the Skill</strong></p>
+                          <select name="Subject" id="Subject" class="form-control" style="color:#000000" >
+                           <option value="Python" >Python</option>
+                           <option value="MongoDB" >MongoDB</option>
+                           <option value="Java" >Java</option>
+                           <option value="C/C++" >C/C++</option>
+                           <option value="ML" >ML</option>
+                        </select>
+                        <p></p>
+                        <label for="quizname"> <b><i>Quiz name: </b></i> </label>
+                         <input type="text" id="quizname" name="quizname"><br><br>
+                         <input type="submit"  name="Save Quiz"  value="Save Quiz" class="btn btn-white">
+                     </form>
+                  </div>
+               </div>
+            </div>
+         </header>
+      </div>
+      </div>
+      <!-- jQuery -->
+      <script src="{% static 'js/jquery.min.js'%}"></script>
+      <!-- jQuery Easing -->
+      <script src="{% static 'js/jquery.easing.1.3.js'%}"></script>
+      <!-- Bootstrap -->
+      <script src="{% static 'js/bootstrap.min.js'%}"></script>
+      <!-- Waypoints -->
+      <script src="{% static 'js/jquery.waypoints.min.js'%}"></script>
+      <!-- Carousel -->
+      <script src="{% static 'js/owl.carousel.min.js'%}"></script>
+      <!-- Magnific Popup -->
+      <script src="{% static 'js/jquery.magnific-popup.min.js'%}"></script>
+      <script src="{% static 'js/magnific-popup-options.js'%}"></script>
+      <!-- Main -->
+      <script src="{% static 'js/main.js' %}"></script>
+      </div>
+   </body>
+</html>

@@ -1,0 +1,114 @@
+{% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
+<!DOCTYPE HTML>
+<!--
+  QuizHop
+   -->
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <title> Quiz Hop </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Adaptive Interview Poral" />
+      <!-- Animate.css -->
+      <link rel="stylesheet" href="{% static 'css/animate.css'%}">
+      <!-- Icomoon Icon Fonts-->
+      <link rel="stylesheet" href="{% static 'css/icomoon.css'%}">
+      <!-- Themify Icons-->
+      <link rel="stylesheet" href="{% static 'css/themify-icons.css'%}">
+      <!-- Bootstrap  -->
+      <link rel="stylesheet" href="{% static 'css/bootstrap.css'%}">
+      <!-- Theme style  -->
+      <link rel="stylesheet" href="{% static 'css/style.css'%}">
+   </head>
+   <body>
+      <div class="gtco-loader"></div>
+      <div id="page">
+         <header id="gtco-header" class="gtco-cover" role="banner">
+            <div class="gtco-container">
+               <div class="display-tc">
+                     <h3><strong>Total score  : {{score}} %</strong></h3>
+                  Total questions asked  : {{total_q_asked}}       Answered correctly     : {{total_q_ans_correct}}
+                     <style>
+                        table, th, td {
+                        border: 1px solid black;
+                        border-collapse: collapse;
+                        }
+                        th, td {
+                        padding: 3px;
+                        }
+                        th {
+                        text-align: left;
+                        }
+                     </style>
+                     </head>
+                     <body>
+                        <table style="width:100% color = ">
+                           <tr>
+                              <th style="color:#000000"> <i>Concept  </i> </th>
+                              <th style="color:#000000"> <i> Score  </i></th>
+                           </tr>
+                          {% for key, value in cat_dict.items %}
+                           <tr>
+                              <td style="color:#0000ff" > {{ key }}    </td>
+                              <td style="color:#0000ff" > {{ value }}  </td>
+                           </tr>
+                           {% endfor %}
+                        </table>
+                        <p></p>
+                        <!--<a href="{% url 'AIP:pickskill' %}" class="btn btn-white">Start Over</a>-->
+
+                        <form method ="post" action="/comment/">{%csrf_token%}
+                           <b style="color:#000000">Would you like to add a Comment or any suggestions:</b><br>
+                           <textarea rows=3 cols=80  name="comment" required></textarea><br>
+                           <input type="submit" value="Add Comment"  style="color:#000000">
+                           <i>{{commsuccess}} </i>
+                        </form>
+
+                        <form method ="post" action="/question/" >{%csrf_token%}
+                           <b style="color:#000000">Add a New Question:</b><br>
+                           <textarea rows=3 co  ls =80  name="question" required></textarea><br>
+                           <input type="submit" value="Add Question" style="color:#000000" >
+                           <i> {{quessuccess}} </i>
+                           <br>
+                        </form>
+
+                        <form method ="post" enctype="multipart/form-data" action="/upload/">{%csrf_token%}
+                           <strong style="color:#000000">Upload a Question:</strong>
+                           <input type="file" name="document" >
+                           <br>
+                           <input type="submit" value="Upload File" style="color:#696969" >
+                           {% if url %}
+                           <span style="margin-left: 40px;"> Uploaded File : <a href = "{{ url }}" style="color:maroon;" span style>{{url}}</a></span>
+                           {% endif %}
+
+                           <p></p>
+                           <strong> <a style="color: #8C001A" href="/logout" >Logout</a></strong>
+                        </form>
+                  </div>
+
+               </div>
+            </div>
+         </header>
+      </div>
+      </div>
+      <!-- jQuery -->
+      <script src="{% static 'js/jquery.min.js'%}"></script>
+      <!-- jQuery Easing -->
+      <script src="{% static 'js/jquery.easing.1.3.js'%}"></script>
+      <!-- Bootstrap -->
+      <script src="{% static 'js/bootstrap.min.js'%}"></script>
+      <!-- Waypoints -->
+      <script src="{% static 'js/jquery.waypoints.min.js'%}"></script>
+      <!-- Carousel -->
+      <script src="{% static 'js/owl.carousel.min.js'%}"></script>
+      <!-- Magnific Popup -->
+      <script src="{% static 'js/jquery.magnific-popup.min.js'%}"></script>
+      <script src="{% static 'js/magnific-popup-options.js'%}"></script>
+      <!-- Main -->
+      <script src="{% static 'js/main.js' %}"></script>
+      </div>
+   </body>
+</html>

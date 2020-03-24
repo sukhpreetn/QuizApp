@@ -1,0 +1,61 @@
+{% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
+<!DOCTYPE HTML>
+<!--
+   QuizHop
+   -->
+<html>
+   <body>
+      <div class="gtco-loader"></div>
+      <div id="page">
+         <header id="gtco-header" class="gtco-cover" role="banner">
+            <div class="gtco-container">
+               <div class="display-tc">
+                     <p><strong><i style="color:#000000">Questions</i></strong></p>
+                       <div class="col-md-7 copy animate-box">
+                        <ol>
+                             {% for question in questions %}
+                             <div class="modal-header">
+                                <h3><span class="label label-warning" id="qid"></span><pre> Q ~ {{ question.q_text }} </pre></h3>
+                             </div>
+                             <div class="modal-body" style="color:#008080">
+                               <label class="option1">{{ question.q_option1 }}</label>
+                               <p></p>
+                               <label class="option2">{{ question.q_option2 }}</label>
+                               <p></p>
+                               <label class="option3">{{ question.q_option3 }}</label>
+                               <p></p>
+                               <label class="option4">{{ question.q_option4 }}</label>
+                             </div>
+                             <div class="modal-footer text-muted">
+                               <pre>{{ question.q_answer }}  </pre>
+                             </div>
+                             {% endfor %}
+                          </ol>
+                           <p></p>
+                        </div>
+                   </form>
+               </div>
+            </div>
+         </header>
+      </div>
+      </div>
+      <!-- jQuery -->
+      <script src="{% static 'js/jquery.min.js'%}"></script>
+      <!-- jQuery Easing -->
+      <script src="{% static 'js/jquery.easing.1.3.js'%}"></script>
+      <!-- Bootstrap -->
+      <script src="{% static 'js/bootstrap.min.js'%}"></script>
+      <!-- Waypoints -->
+      <script src="{% static 'js/jquery.waypoints.min.js'%}"></script>
+      <!-- Carousel -->
+      <script src="{% static 'js/owl.carousel.min.js'%}"></script>
+      <!-- Magnific Popup -->
+      <script src="{% static 'js/jquery.magnific-popup.min.js'%}"></script>
+      <script src="{% static 'js/magnific-popup-options.js'%}"></script>
+      <!-- Main -->
+      <script src="{% static 'js/main.js' %}"></script>
+      </div>
+   </body>
+</html>

@@ -1,0 +1,74 @@
+{% load static %}
+{% load socialaccount %}
+
+<!DOCTYPE HTML>
+<!--
+   QuizHop
+   -->
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <title> Quiz Hop </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Adaptive Interview Poral" />
+      <link href="https://fonts.googleapis.com/css?family=Raleway:100,300,400,700" rel="stylesheet">
+      <!-- Animate.css -->
+      <link rel="stylesheet" href="{% static 'css/animate.css'%}">
+      <!-- Icomoon Icon Fonts-->
+      <link rel="stylesheet" href="{% static 'css/icomoon.css'%}">
+      <!-- Themify Icons-->
+      <link rel="stylesheet" href="{% static 'css/themify-icons.css'%}">
+      <!-- Bootstrap  -->
+      <link rel="stylesheet" href="{% static 'css/bootstrap.css'%}">
+      <!-- Theme style  -->
+      <link rel="stylesheet" href="{% static 'css/style.css'%}">
+   </head>
+   <body>
+
+
+      <div class="gtco-loader"></div>
+         <div id="page">
+            <header id="gtco-header" class="gtco-cover" role="banner">
+               <div class="gtco-container">
+                  <div class="display-tc">
+                     <div class="row">
+                        <form id="form" name="form" method="post" action="/addquestion1/">{%  csrf_token %}
+                            <strong><i style="color:#000000">Please select questions to add in the quiz </i></strong>
+                            <ol>
+                              {% for question in questions %}
+                                 <li><input type='checkbox' name='questionchecked' value='{{question.pk}}' id='{{question.pk}}'/>
+                                 <span><label class='list' for='{{question.pk}}'>{{question.q_cat}} &nbsp; &nbsp;  &nbsp; {{question}}</label></span>
+
+                              {% endfor %}
+                            </ol>
+                            <input type="submit" name="BEGIN" value= "Add" class="btn btn-white"/> &nbsp;&nbsp;&nbsp;&nbsp;
+                        </form>
+                        <form id="form1" name="form1" method="post" action="/add/">{%  csrf_token %}
+                           <input type="submit" name="BEGIN" value= "Add New Question" class="btn btn-white"/> &nbsp;&nbsp;&nbsp;&nbsp;
+                        </form>
+                        <strong> <a style="color: #8C001A" href="/logout">Logout</a></strong>
+                     </div>
+                  </div>
+               </div>
+            </header>
+         </div>
+      </div>
+      <!-- jQuery -->
+      <script src="{% static 'js/jquery.min.js'%}"></script>
+      <!-- jQuery Easing -->
+      <script src="{% static 'js/jquery.easing.1.3.js'%}"></script>
+      <!-- Bootstrap -->
+      <script src="{% static 'js/bootstrap.min.js'%}"></script>
+      <!-- Waypoints -->
+      <script src="{% static 'js/jquery.waypoints.min.js'%}"></script>
+      <!-- Carousel -->
+      <script src="{% static 'js/owl.carousel.min.js'%}"></script>
+      <!-- Magnific Popup -->
+      <script src="{% static 'js/jquery.magnific-popup.min.js'%}"></script>
+      <script src="{% static 'js/magnific-popup-options.js'%}"></script>
+      <!-- Main -->
+      <script src="{% static 'js/main.js' %}"></script>
+      </div>
+   </body>
+</html>

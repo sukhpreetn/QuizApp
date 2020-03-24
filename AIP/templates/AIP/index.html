@@ -1,0 +1,76 @@
+
+{% load static %}
+{% load socialaccount %}
+<!DOCTYPE HTML>
+<!--
+   QuizHop
+   -->
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <title> Quiz Hop </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Adaptive Interview Poral" />
+      <!-- Animate.css -->
+      <link rel="stylesheet" href="{% static 'css/animate.css'%}">
+      <!-- Icomoon Icon Fonts-->
+      <link rel="stylesheet" href="{% static 'css/icomoon.css'%}">
+      <!-- Themify Icons-->
+      <link rel="stylesheet" href="{% static 'css/themify-icons.css'%}">
+      <!-- Bootstrap  -->
+      <link rel="stylesheet" href="{% static 'css/bootstrap.css'%}">
+      <!-- Theme style  -->
+      <link rel="stylesheet" href="{% static 'css/style.css'%}">
+   </head>
+   <body>
+      <div class="gtco-loader"></div>
+      <div id="page">
+      <header id="gtco-header" class="gtco-cover" role="banner">
+         <div class="gtco-container">
+            <div class="display-tc">
+               <div class="row">
+                  <div class="col-md-5 text-center header-img animate-box">
+                     <img src="{% static 'images/cube.png'%}">
+                  </div>
+                  <div class="col-md-7 copy animate-box">
+                     <h1>Adaptive Learning Portal  </h1> <h2><i> Let's Quiz Hop !! </i></h2>
+                     <p>Evaluate your skills today !</p>
+                     <a href="{% provider_login_url 'google' %}" class="btn btn-white">Login with Google</a>
+                     <a href=# class="btn btn-white">Login with Facebook</a>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </header>
+      <!-- END #gtco-header -->
+      <div class="gtco-client">
+         <div class="gtco-container">
+            <div class="row">
+               <h3>About us</h3>
+               <p>Adaptive Learning Portal is an Online Test portal for programming languages.
+                  We are a community-driven website with free programming exams, tips and numerous innovative features  <helpi></helpi>ng students/professionals evaluate their skills online.
+               </p>
+            </div>
+         </div>
+      </div>
+      <!-- jQuery -->
+      <script src="{% static 'js/jquery.min.js'%}"></script>
+      <!-- jQuery Easing -->
+      <script src="{% static 'js/jquery.easing.1.3.js'%}"></script>
+      <!-- Bootstrap -->
+      <script src="{% static 'js/bootstrap.min.js'%}"></script>
+      <!-- Waypoints -->
+      <script src="{% static 'js/jquery.waypoints.min.js'%}"></script>
+      <!-- Carousel -->
+      <script src="{% static 'js/owl.carousel.min.js'%}"></script>
+      <!-- Magnific Popup -->
+      <script src="{% static 'js/jquery.magnific-popup.min.js'%}"></script>
+      <script src="{% static 'js/magnific-popup-options.js'%}"></script>
+      <!-- Main -->
+      <script src="{% static 'js/main.js' %}"></script>
+   </body>
+</html>
+
+
+

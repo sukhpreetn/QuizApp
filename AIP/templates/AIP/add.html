@@ -1,0 +1,6 @@
+<h2>New Question</h2>
+      <form method="POST">{%  csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="save btn btn-default">Add Question</button>
+      </form>
+
