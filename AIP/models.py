@@ -41,6 +41,7 @@ class Answer(models.Model):
 
 class Result(models.Model):
     c_user                      = models.CharField(max_length=100)
+    c_email                     = models.CharField(max_length=100,default='')
     c_quiz_name                 = models.CharField(max_length=100,default='')
     c_tot_score                 = models.IntegerField(default=0)
     c_cat_scores                = models.TextField(null=True,default=0)

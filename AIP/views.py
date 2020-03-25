@@ -17,7 +17,6 @@ from django.contrib.auth.decorators import permission_required
 from .forms import QuestionForm
 from django.contrib.auth.models import User
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,UpdateView)
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def index(request):
@@ -29,8 +28,10 @@ def index(request):
 
 def pickskill(request):
     request.session['user'] = request.user.get_full_name()
+    request.session['email'] = request.user.email
     user = request.session['user']
-    Result.objects.create(c_user=user)
+    email = request.session['email']
+    Result.objects.create(c_user=user,c_email=email)
     context = {'user':user}
     return render(request, 'AIP/pickskill.html',context)
 
@@ -297,7 +298,6 @@ def scores(request,pk):
 
     results = Result.objects.filter(c_quiz_name=pk).order_by('-c_attempt_date')
 
-
     if not results:
         context = {'results': results, 'quiz': 'Quiz Not Found'}
     else:
@@ -396,6 +396,8 @@ def takequiz(request, pk):
     if request.user.is_authenticated:
         request.session['user'] = request.user.get_full_name()
         user = request.session['user']
+        request.session['email'] = request.user.email
+        email = request.session['email']
         quiz = get_object_or_404(Quiz, pk=pk)
         quiz_str = json.loads(quiz.quiz_questions)
         total = len(quiz_str)
@@ -439,7 +441,7 @@ def takequiz(request, pk):
                 total_ans_incorrect = ((total_q_asked-1) - total_q_ans_correct)
                 score = round(score1)
                 cat_scores = json.dumps(cat_dict)
-                Result.objects.create(c_user=user, c_quiz_name=pk,c_tot_score=score,c_cat_scores=cat_scores,
+                Result.objects.create(c_user=user,c_email=email, c_quiz_name=pk,c_tot_score=score,c_cat_scores=cat_scores,
                                       c_total_q_asked=(total_q_asked-1),c_total_ans_correct=total_q_ans_correct,
                                       c_total_ans_incorrect=total_ans_incorrect)
 
@@ -498,20 +500,3 @@ def reviewquiz(request,pk):
     context = {'questions': questions,'total':total}
     return render(request, 'AIP/compare.html',context)
 
-
-@permission_required('admin.can_add_log_entry')
-def exportscores(request):
-    response = HttpResponse(content_type='text/csv')
-    writer = csv.writer(response)
-    writer.writerow(
-        ['q_subject', 'q_cat', 'q_rank', 'q_text', 'q_option1', 'q_option2', 'q_option3', 'q_option4', 'q_answer',
-         'q_ask_time', 'no_times_ques_served', 'no_times_anwered_correctly', 'no_times_anwered_incorrectly',
-         'difficulty_score'])
-    for data in Question.objects.all().values_list('q_subject', 'q_cat', 'q_rank', 'q_text', 'q_option1', 'q_option2',
-                                                   'q_option3', 'q_option4', 'q_answer', 'q_ask_time',
-                                                   'no_times_ques_served', 'no_times_anwered_correctly',
-                                                   'no_times_anwered_incorrectly', 'difficulty_score'):
-        writer.writerow(data)
-
-    response['Content-Disposition'] = 'attachment; filename="questions.csv"'
-    return response

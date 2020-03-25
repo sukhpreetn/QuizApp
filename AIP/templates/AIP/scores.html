@@ -47,6 +47,7 @@
                         <table style="width:100% color = ">
                            <tr>
                               <th style="color:#000000"> <i>User  </i> </th>
+                              <th style="color:#000000"> <i>Email  </i> </th>
                               <th style="color:#000000"> <i> Total Score  </i></th>
                                <th style="color:#000000"> <i> Total Questions  </i></th>
                                <th style="color:#000000"> <i> Total Answered Correclty  </i></th>
@@ -56,6 +57,7 @@
                              {% for result in results %}
                               <tr>
                                  <td style="color:#0000ff" > {{result.c_user}}    </td>
+                                 <td style="color:#0000ff" > {{result.c_email}}    </td>
                                  <td style="color:#0000ff" > {{result.c_tot_score}}  </td>
                                   <td style="color:#0000ff" > {{result.c_total_q_asked}}  </td>
                                   <td style="color:#0000ff" > {{result.c_total_ans_correct}}  </td>
