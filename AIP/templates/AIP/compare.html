@@ -12,24 +12,25 @@
          <header id="gtco-header" class="gtco-cover" role="banner">
             <div class="gtco-container">
                <div class="display-tc">
-                     <p><strong><i style="color:#000000">Questions</i></strong></p>
+                     <p><strong><i style="color:#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total Questions : {{total}}</i></strong></p>
                        <div class="col-md-7 copy animate-box">
                         <ol>
                              {% for question in questions %}
-                             <div class="modal-header">
-                                <h3><span class="label label-warning" id="qid"></span><pre> Q ~ {{ question.q_text }} </pre></h3>
+                             <div class="modal-header" >
+                             <h3><span class="label label-warning" id="qid"></span><pre> Q ~ {{ question.q_text }} </pre></h3>
                              </div>
                              <div class="modal-body" style="color:#008080">
-                               <label class="option1">{{ question.q_option1 }}</label>
+                               <label class="option1" >  {{ question.q_option1 }}</label>
                                <p></p>
-                               <label class="option2">{{ question.q_option2 }}</label>
+                               <label class="option2">   {{ question.q_option2 }}</label>
                                <p></p>
-                               <label class="option3">{{ question.q_option3 }}</label>
+                               <label class="option3">   {{ question.q_option3 }}</label>
                                <p></p>
-                               <label class="option4">{{ question.q_option4 }}</label>
+                               <label class="option4">   {{ question.q_option4 }}</label>
+
                              </div>
                              <div class="modal-footer text-muted">
-                               <pre>{{ question.q_answer }}  </pre>
+                               <pre>A ~ {{ question.q_answer }}  </pre>
                              </div>
                              {% endfor %}
                           </ol>

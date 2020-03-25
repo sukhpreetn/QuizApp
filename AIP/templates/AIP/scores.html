@@ -6,7 +6,7 @@
    QuizHop
    -->
 <html>
-   <head>
+    <head>
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <title> Quiz Hop </title>
@@ -29,11 +29,7 @@
          <header id="gtco-header" class="gtco-cover" role="banner">
             <div class="gtco-container">
                <div class="display-tc">
-                     <h3><strong>Score Sheet for Quiz : {{quiz}} </strong></h3>
-                   {% for data in result %}
-                        {{result.c_tot_score}}
-                        {{result.c_cat_scores}}
-                   {% endfor %}
+                     <h3><strong>Score Sheet for Quiz : {{quiznm}} </strong></h3>
                      <style>
                         table, th, td {
                         border: 1px solid black;
@@ -50,18 +46,20 @@
                      <body>
                         <table style="width:100% color = ">
                            <tr>
-                              <th style="color:#000000"> <i>Quiz  </i> </th>
                               <th style="color:#000000"> <i>User  </i> </th>
                               <th style="color:#000000"> <i> Total Score  </i></th>
-                              <th style="color:#000000"> <i> Category Score  </i></th>
+                               <th style="color:#000000"> <i> Total Questions  </i></th>
+                               <th style="color:#000000"> <i> Total Answered Correclty  </i></th>
+                               <th style="color:#000000"> <i> Total Answered Incorrectly  </i></th>
                                <th style="color:#000000"> <i> Attempt Date  </i></th>
                            </tr>
                              {% for result in results %}
                               <tr>
-                                 <td style="color:#0000ff" > {{result.c_quiz_name}}    </td>
                                  <td style="color:#0000ff" > {{result.c_user}}    </td>
                                  <td style="color:#0000ff" > {{result.c_tot_score}}  </td>
-                                  <td style="color:#0000ff" > {{result.c_cat_scores}}
+                                  <td style="color:#0000ff" > {{result.c_total_q_asked}}  </td>
+                                  <td style="color:#0000ff" > {{result.c_total_ans_correct}}  </td>
+                                  <td style="color:#0000ff" > {{result.c_total_ans_incorrect}}  </td>
                                   <td style="color:#0000ff" > {{result.c_attempt_date}}
                               </tr>
                               {% endfor %}

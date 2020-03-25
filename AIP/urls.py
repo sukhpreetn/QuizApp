@@ -27,8 +27,10 @@ urlpatterns = [
     path('addquestion1/', views.addquestion1, name='addquestion1'),
     path('quizlist/', views.quizbucket, name='quizbucket'),
     path('quiz/<int:pk>/', views.takequiz, name='takequiz'),
-    path('searchquiz/', views.searchquiz, name='searchquiz'),
-    path('compare/', views.compare, name='compare'),
+    path('searchquiz/<int:pk>/', views.searchquiz, name='searchquiz'),
+    path('scores/<int:pk>/', views.scores, name='scores'),
+    path('review/', views.review, name='review'),
+    path('review/<str:pk>/', views.reviewquiz, name='reviewquiz'),
 
 ]
 

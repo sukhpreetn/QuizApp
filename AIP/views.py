@@ -100,8 +100,9 @@ def quizsimple(request):
             score1 = (total_q_ans_correct / (total_q_asked - 1)) * 100
             score = round(score1)
             cat_scores = json.dumps(cat_dict)
+            total_ans_incorrect = ((total_q_asked - 1) - total_q_ans_correct)
             Result.objects.filter(c_user=user).update(c_tot_score=score)
-            Result.objects.filter(c_user=user).update(c_cat_scores=cat_scores)
+            Result.objects.filter(c_user=user).update(c_cat_scores=cat_scores,c_total_q_asked=(total_q_asked-1),c_total_ans_correct=total_q_ans_correct,c_total_ans_incorrect=total_ans_incorrect)
             score_context = {'score': score, 'cat_dict': cat_dict, 'total_q_asked': total_q_asked - 1,
                              'total_q_ans_correct': total_q_ans_correct}
             return render(request, 'AIP/report.html', score_context)
@@ -168,8 +169,12 @@ def quiz(request):
             score1 = (total_q_ans_correct / (total_q_asked - 1)) * 100
             score = round(score1)
             cat_scores = json.dumps(cat_dict)
+            total_ans_incorrect = ((total_q_asked - 1) - total_q_ans_correct)
+
             Result.objects.filter(c_user=user).update(c_tot_score=score)
-            Result.objects.filter(c_user=user).update(c_cat_scores=cat_scores)
+            Result.objects.filter(c_user=user).update(c_cat_scores=cat_scores, c_total_q_asked=(total_q_asked-1),
+                                                      c_total_ans_correct=total_q_ans_correct,
+                                                      c_total_ans_incorrect=total_ans_incorrect)
             score_context = {'score': score, 'cat_dict': cat_dict, 'total_q_asked': total_q_asked - 1,
                              'total_q_ans_correct': total_q_ans_correct}
             return render(request, 'AIP/report.html', score_context)
@@ -286,16 +291,25 @@ def questionupload(request):
 
 
 @permission_required('admin.can_add_log_entry')
-def scores(request):
-    return render(request, 'AIP/scores1.html')
+def scores(request,pk):
+    quiz = get_object_or_404(Quiz, pk=pk)
+    quiznm = quiz.quiz_OrgIdentifier
 
-def searchquiz(request):
-    search_query = request.POST.get('search_box')
-    results = Result.objects.filter(c_quiz_name = search_query ).order_by('-c_attempt_date')
+    results = Result.objects.filter(c_quiz_name=pk).order_by('-c_attempt_date')
+
+
     if not results:
         context = {'results': results, 'quiz': 'Quiz Not Found'}
     else:
-        context = {'results':results,'quiz':search_query}
+        context = {'results':results,'quiznm':quiznm}
+    return render(request, 'AIP/scores.html', context)
+
+def searchquiz(request,pk):
+    results = Result.objects.filter(c_quiz_name = pk).order_by('-c_attempt_date')
+    if not results:
+        context = {'results': results, 'quiz': 'Quiz Not Found'}
+    else:
+        context = {'results':results,'quiz':pk}
     return render(request, 'AIP/scores.html', context)
 
 @permission_required('admin.can_add_log_entry')
@@ -422,9 +436,13 @@ def takequiz(request, pk):
             q_no += 1
             if q_no == total or request.POST.get('END') == 'STOP':
                 score1 = (total_q_ans_correct / (total_q_asked - 1)) * 100
+                total_ans_incorrect = ((total_q_asked-1) - total_q_ans_correct)
                 score = round(score1)
                 cat_scores = json.dumps(cat_dict)
-                Result.objects.create(c_user=user, c_quiz_name=pk,c_tot_score=score,c_cat_scores=cat_scores)
+                Result.objects.create(c_user=user, c_quiz_name=pk,c_tot_score=score,c_cat_scores=cat_scores,
+                                      c_total_q_asked=(total_q_asked-1),c_total_ans_correct=total_q_ans_correct,
+                                      c_total_ans_incorrect=total_ans_incorrect)
+
                 score_context = {'score': score, 'cat_dict': cat_dict, 'total_q_asked': total_q_asked - 1,
                                  'total_q_ans_correct': total_q_ans_correct}
                 return render(request, 'AIP/report.html', score_context)
@@ -460,18 +478,40 @@ def takequiz(request, pk):
 
 
 @permission_required('admin.can_add_log_entry')
-def compare(request):
+def review(request):
     questions = Question.objects.all()
-    return render(request, 'AIP/compare.html', {'questions': questions})
-    #return  HttpResponse(questions)
-    numbers_list = range(1, 1000)
-    page = request.GET.get('page', 1)
-    paginator = Paginator(numbers_list, 20)
+    total = len(questions)
+    context = {'questions': questions, 'total': total}
+    return render(request, 'AIP/compare.html', context)
 
-    try:
-        numbers = paginator.page(page)
-    except PageNotAnInteger:
-        numbers = paginator.page(1)
-    except EmptyPage:
-        numbers = paginator.page(paginator.num_pages)
-    return render(request, 'AIP/compare.html', {'numbers': numbers})
+
+@permission_required('admin.can_add_log_entry')
+def reviewquiz(request,pk):
+    quiz = get_object_or_404(Quiz, pk=pk)
+    quiz_str = json.loads(quiz.quiz_questions)
+    total = len(quiz_str)
+    questions = []
+    for qid in quiz_str:
+        ques = get_object_or_404(Question,pk=qid)
+        questions.append(ques)
+
+    context = {'questions': questions,'total':total}
+    return render(request, 'AIP/compare.html',context)
+
+
+@permission_required('admin.can_add_log_entry')
+def exportscores(request):
+    response = HttpResponse(content_type='text/csv')
+    writer = csv.writer(response)
+    writer.writerow(
+        ['q_subject', 'q_cat', 'q_rank', 'q_text', 'q_option1', 'q_option2', 'q_option3', 'q_option4', 'q_answer',
+         'q_ask_time', 'no_times_ques_served', 'no_times_anwered_correctly', 'no_times_anwered_incorrectly',
+         'difficulty_score'])
+    for data in Question.objects.all().values_list('q_subject', 'q_cat', 'q_rank', 'q_text', 'q_option1', 'q_option2',
+                                                   'q_option3', 'q_option4', 'q_answer', 'q_ask_time',
+                                                   'no_times_ques_served', 'no_times_anwered_correctly',
+                                                   'no_times_anwered_incorrectly', 'difficulty_score'):
+        writer.writerow(data)
+
+    response['Content-Disposition'] = 'attachment; filename="questions.csv"'
+    return response

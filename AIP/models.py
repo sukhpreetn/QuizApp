@@ -47,6 +47,9 @@ class Result(models.Model):
     c_comment                   = models.TextField(null=True,default='')
     c_new_quest                 = models.TextField(null=True,default='')
     c_attempt_date              = models.DateTimeField(default=datetime.now, blank=True)
+    c_total_q_asked             = models.IntegerField(default=0)
+    c_total_ans_correct         = models.IntegerField(default=0)
+    c_total_ans_incorrect       = models.IntegerField(default=0)
 
     def __str__(self):
         return self.c_user
