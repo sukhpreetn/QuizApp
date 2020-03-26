@@ -476,7 +476,10 @@ def takequiz(request, pk):
     else:
         request.session['quizname'] = '{}'.format(pk)
         quizname = request.session['quizname']
-        return render(request, 'AIP/index.html')
+        context = {'quizname':quizname}
+        return render(request, 'AIP/index.html',context)
+
+
 
 
 @permission_required('admin.can_add_log_entry')
@@ -493,10 +496,11 @@ def reviewquiz(request,pk):
     quiz_str = json.loads(quiz.quiz_questions)
     total = len(quiz_str)
     questions = []
+
     for qid in quiz_str:
         ques = get_object_or_404(Question,pk=qid)
         questions.append(ques)
 
-    context = {'questions': questions,'total':total}
+    context = {'questions': questions,'total':total,'subject':questions[0].q_subject,'category':questions[0].q_cat}
     return render(request, 'AIP/compare.html',context)
 
