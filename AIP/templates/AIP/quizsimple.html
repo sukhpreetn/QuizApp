@@ -100,7 +100,9 @@
                                  <p></p>
                                  <div class="form-group">
                                         <input type="submit" name="BEGIN" value= "Next ->" class="btn btn-white"/> &nbsp;&nbsp;&nbsp;&nbsp;
-                                        <!--<input type="submit" name="END" value= "STOP" class="btn btn-white"/> &nbsp;&nbsp;&nbsp;&nbsp;-->
+                                       {% if  quizname == None %}
+                                           <input type="submit" name="END" value= "STOP" class="btn btn-white"/> &nbsp;&nbsp;&nbsp;&nbsp;
+                                        {% endif %}
                                  </div>
                               </div>
                               </form>

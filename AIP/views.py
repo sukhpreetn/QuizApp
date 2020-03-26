@@ -471,7 +471,8 @@ def takequiz(request, pk):
             q_no = request.session['q_no']
             total_q_asked = request.session['total_q_asked']
             question = get_object_or_404(Question, pk=quiz_str[q_no])
-            context = {'total_q_asked': total_q_asked, 'question': question}
+            quizname = request.session['quizname']
+            context = {'total_q_asked': total_q_asked, 'question': question,'quizname':quizname}
             return render(request, 'AIP/quizsimple.html', context)
     else:
         request.session['quizname'] = '{}'.format(pk)
