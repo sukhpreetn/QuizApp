@@ -1,6 +1,5 @@
 {% load static %}
 {% load socialaccount %}
-{% providers_media_js %}
 <!DOCTYPE HTML>
 <!--
    QuizHop
@@ -25,44 +24,18 @@
       <link rel="stylesheet" href="{% static 'css/style.css'%}">
    </head>
    <body>
-   {{category}}
-
+   {{addquestion}}
       <div class="gtco-loader"></div>
       <div id="page">
          <header id="gtco-header" class="gtco-cover" role="banner">
             <div class="gtco-container">
                <div class="display-tc">
                   <div class="row">
-                     <form id="form" name="form" method="post" action="/begin/">{%  csrf_token %}
-                      {{ form.as_p }}
-                     <p><strong><i style="color:#000000">Welcome {{user}}<i></strong></p>
-                        <p><strong>Please pick a skill to start the test</strong></p>
-                     <div class="form-group">
-                        <select name="skill" id="skill" class="form-control" style="color:#000000" >
-                           <option value="Python" >Python</option>
-                           <option value="MongoDB" >MongoDB</option>
-                           <option value="Java" >Java</option>
-                           <option value="C/C++" >C/C++</option>
-                           <option value="ML" >ML</option>
-                        </select>
-                     </div>
-                     <div class="form-group">
-                        <p><strong>What is your proficiency level</strong></p>
-                           <select name="proficiency" id="proficiency" class="form-control" style="color:#000000"  >
-                              {% for category in categories %}
-                                   <option value="Beginner">{{category}} </option>
-                              {% endfor %}
-                           </select>
-                        <br></br>
-                       <div class="col-md-7 copy animate-box">
-                           <input type="submit"  name="Begin Test"  value="Begin Test" class="btn btn-white">
-                          <p></p>
-                          <strong> <a style="color: #8C001A" href="/logout" >Logout</a></strong>
-                        </div>
-                        </form>
-                     <p></p>
-                     <p></p>
+                     <form id="form" name="form" method="get" action="/searchquiz/">{%  csrf_token %}
+                         <p><strong>Sorry ... the quiz has expired   !!</strong></p>
 
+                         <p></p>
+                     </form>
                   </div>
                </div>
             </div>

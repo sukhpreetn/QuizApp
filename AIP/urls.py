@@ -31,6 +31,8 @@ urlpatterns = [
     path('scores/<int:pk>/', views.scores, name='scores'),
     path('review/', views.review, name='review'),
     path('review/<str:pk>/', views.reviewquiz, name='reviewquiz'),
+    path('markattendance/<int:pk>/', views.markattendance, name='markattendance'),
+    path('showattendance/<int:pk>/', views.showattendance, name='showattendance'),
 
 ]
 

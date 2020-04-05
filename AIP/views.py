@@ -1,13 +1,21 @@
 import datetime
+from datetime import timedelta
 import os
-
+import pprint
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from smtplib import SMTP
+from django.db.models import Count
+import pandas as pd
+from django.conf import settings
 from django.http import HttpResponse, request, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
+from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect, resolve_url
 from django.utils.datastructures import MultiValueDictKeyError
 from django.core.files.storage import FileSystemStorage
 from django.views import generic
 from django.urls import reverse
-from .models import Question, Answer, Result,Quiz
+from .models import Question, Answer, Result,Quiz,Attendance,Trainee_Attendance
 from django.http import HttpResponse
 import json
 import random
@@ -21,10 +29,17 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,U
 
 def index(request):
     quizname = request.session.get('quizname',None)
+    #quizattend = request.session['fromattend']
+    #return HttpResponse(quizname)
+
     if quizname is None:
-        return render(request, 'AIP/index.html')
+        #settings.LOGIN_REDIRECT_URL = '/pickskill'
+        #return render(request, 'AIP/index.html')
+        settings.LOGIN_REDIRECT_URL = '/'
+        return render(request, 'AIP/success.html')
     else:
         return redirect('AIP:takequiz', pk=quizname)
+
 
 def pickskill(request):
     request.session['user'] = request.user.get_full_name()
@@ -32,7 +47,15 @@ def pickskill(request):
     user = request.session['user']
     email = request.session['email']
     Result.objects.create(c_user=user,c_email=email)
-    context = {'user':user}
+    category_count = Question.objects.values('q_rank').order_by('q_rank').annotate(count=Count('q_rank'))
+    cat_count = list(category_count)
+    categories = []
+    for item in cat_count:
+        cnt = str(item['count'])
+        line = item['q_rank'] + ' (' + cnt + ')'
+        categories.append(line)
+
+    context = {'user':user,'categories':categories}
     return render(request, 'AIP/pickskill.html',context)
 
 def begin(request):
@@ -68,10 +91,11 @@ def quizsimple(request):
     user = request.session['user']
 
     questions = Question.objects.filter(q_subject=subject, q_rank=rank)
-    #max = Question.objects.filter(q_subject=subject, q_rank=rank).count()
-    #ind = random.randint(1, max)
-    #question = questions[ind]
-    question = questions[0]
+    max = Question.objects.filter(q_subject=subject, q_rank=rank).count()
+    ind = random.randint(1, max)
+    #return  HttpResponse(ind)
+    question = questions[ind]
+    #question = questions[0]
     context = {'total_q_asked': total_q_asked, 'question': question}
     if request.method == 'POST':
         option = request.POST.get('options')
@@ -97,7 +121,7 @@ def quizsimple(request):
         Question.objects.filter(pk=q.pk).update(no_times_ques_served=question.no_times_ques_served,
                                                 no_times_anwered_correctly=question.no_times_anwered_correctly,
                                                 no_times_anwered_incorrectly=question.no_times_anwered_incorrectly)
-        if counter == 100 or request.POST.get('END') == 'STOP':
+        if counter == (max-1) or request.POST.get('END') == 'STOP':
             score1 = (total_q_ans_correct / (total_q_asked - 1)) * 100
             score = round(score1)
             cat_scores = json.dumps(cat_dict)
@@ -392,12 +416,38 @@ def quizbucket(request):
     else:
         return render(request, 'AIP/index.html')
 
+def check_expiry():
+    datetimeFormat = '%Y-%m-%d %H:%M:%S'
+
+    date1 = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    queryset  =  Attendance.objects.all()
+    reg_time = [p.expire_time for p in queryset]
+
+    date2 = reg_time[0].strftime("%Y-%m-%d %H:%M:%S")
+    diff = datetime.datetime.strptime(date2, datetimeFormat) \
+           - datetime.datetime.strptime(date1, datetimeFormat)
+    print("expire_time :" , date2)
+    print("login time" , date1)
+    print("difference", diff)
+    print(diff.total_seconds())
+    if diff.total_seconds() < 5 :
+        return  True
+    else:
+        return  False
+
 def takequiz(request, pk):
     if request.user.is_authenticated:
+        expired =  check_expiry()
+        if expired == True:
+            return render(request, 'AIP/notfound.html')
+
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         request.session['user'] = request.user.get_full_name()
         user = request.session['user']
         request.session['email'] = request.user.email
         email = request.session['email']
+        Trainee_Attendance.objects.create(trainee_email=email,login_time=now)
         quiz = get_object_or_404(Quiz, pk=pk)
         quiz_str = json.loads(quiz.quiz_questions)
         total = len(quiz_str)
@@ -447,6 +497,8 @@ def takequiz(request, pk):
 
                 score_context = {'score': score, 'cat_dict': cat_dict, 'total_q_asked': total_q_asked - 1,
                                  'total_q_ans_correct': total_q_ans_correct}
+
+                send_mail(email,score,cat_dict)
                 return render(request, 'AIP/report.html', score_context)
 
             request.session['q_no'] = q_no
@@ -456,7 +508,8 @@ def takequiz(request, pk):
             request.session['cat_dict'] = cat_dict
 
             question = get_object_or_404(Question, pk=quiz_str[q_no])
-            context = {'total_q_asked': total_q_asked, 'question': question}
+            quizname = request.session['quizname']
+            context = {'total_q_asked': total_q_asked, 'question': question,'quizname':quizname}
             return render(request, 'AIP/quizsimple.html', context)
 
         else:
@@ -478,9 +531,44 @@ def takequiz(request, pk):
         request.session['quizname'] = '{}'.format(pk)
         quizname = request.session['quizname']
         context = {'quizname':quizname}
+        settings.LOGIN_REDIRECT_URL = '/'
         return render(request, 'AIP/index.html',context)
 
+def send_mail(email,score,cat_dict):
+    print(email)
+    score_data= pd.DataFrame(
+        {
+            'category score':cat_dict,
+        }
+    )
+    #recipients = [email,'sukhpreetn@gmail.com','ravi92teja@gmail.com']
+    recipients = [email, 'sukhpreetn@gmail.com']
+    emaillist = [elem.strip().split(',') for elem in recipients]
+    msg = MIMEMultipart()
+    msg['Subject'] = "Quiz Hop Scores"
+    msg['From'] = 'ravi92teja@gmail.com'
 
+    html = """\
+    <html>
+      <head></head>
+      <body>
+        Total Score is : {0} 
+        <p></p>
+        Category wise split of Scores :
+        {1}
+      </body>
+    </html>
+    """.format(score,score_data.to_html())
+
+    part1 = MIMEText(html, 'html')
+    msg.attach(part1)
+
+    server = smtplib.SMTP('smtp.gmail.com',587)
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+    server.login('pyvebdev@gmail.com', 'snwylifpbqtszbxe')
+    server.sendmail(msg['From'], emaillist , msg.as_string())
 
 
 @permission_required('admin.can_add_log_entry')
@@ -505,3 +593,55 @@ def reviewquiz(request,pk):
     context = {'questions': questions,'total':total,'subject':questions[0].q_subject,'category':questions[0].q_cat}
     return render(request, 'AIP/compare.html',context)
 
+
+def markattendance(request, pk):
+    if request.method == 'POST':
+
+        trainer = request.POST.get('trainer')
+        trainees = request.POST.get('trainees')
+        expires = request.POST.get('expires')
+
+        Attendance.objects.create(trainer_name=trainer, trainee_emails=trainees, expire_time=expires)
+        trainee_list = trainees.split("\r\n")
+        send_mail_attendance(trainee_list,pk)
+
+        #request.session['fromattend'] = 'attend'
+        return redirect('AIP:showattendance', pk=pk)
+
+    else:
+        return render(request, 'AIP/markattendance.html')
+
+def showattendance(request, pk):
+    results = Trainee_Attendance.objects.all()
+    context = {'results':results,'pk':pk}
+    return render(request, 'AIP/showattendance.html',context)
+
+def send_mail_attendance(trainee_list,pk):
+    q_name  = str(pk)
+    #url = "http://sukhpreetn.pythonanywhere.com/"
+    url = "http://127.0.0.1:8000/"
+
+    recipients = trainee_list
+    emaillist = [elem.strip().split(',') for elem in recipients]
+    msg = MIMEMultipart()
+    msg['Subject'] = "Quiz Hop : Mark your attendance"
+    msg['From'] = 'ravi92teja@gmail.com'
+
+    html = """\
+    <html>
+      <head></head>
+      <body>
+       Login <a href= {0}> here </a>
+        
+      </body>
+    </html>
+    """.format(url)
+    part1 = MIMEText(html, 'html')
+    msg.attach(part1)
+
+    server = smtplib.SMTP('smtp.gmail.com',587)
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+    server.login('pyvebdev@gmail.com', 'snwylifpbqtszbxe')
+    server.sendmail(msg['From'], emaillist , msg.as_string())

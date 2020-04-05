@@ -31,11 +31,9 @@
             <div class="gtco-container">
                <div class="display-tc">
                   <div class="row">
-                     <form id="form" name="form" method="post" action="/searchquiz/">{%  csrf_token %}
-                         <p><strong>Search the quiz to view the scores</strong></p>
+                     <form id="form" name="form" method="get" action="/searchquiz/">{%  csrf_token %}
+                         <p><strong>congratulations .. you are marked present  !!</strong></p>
 
-                            <input  id="search_box" type="text" name="search_box"  placeholder="Search..." >
-                            <button id="search_submit" type="submit">Search</button>
                          <p></p>
                      </form>
                   </div>

@@ -2,6 +2,22 @@ from django.db import models
 from datetime import datetime
 
 # Create your models here.
+class Attendance(models.Model):
+    trainer_name                     = models.CharField(max_length=200,default='')
+    trainee_emails                   = models.TextField(null=True)
+    expire_time                      = models.DateTimeField(default=datetime.now, blank=True)
+
+    def __str__(self):
+        return self.trainer_name
+
+class Trainee_Attendance(models.Model):
+    trainee_email                    = models.CharField(max_length=100,default='')
+    login_time                       = models.DateTimeField(default=datetime.now, blank=True)
+
+    def __str__(self):
+        return self.trainee_email
+
+
 class Quiz(models.Model):
     quiz_name                        = models.CharField(max_length=100,default='')
     quiz_OrgIdentifier               = models.CharField(max_length=40,default='')
